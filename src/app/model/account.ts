@@ -1,6 +1,6 @@
 export interface Account {
-  id: number ;
+  id: number;
   accountHolderName: string;
-  pinNumber: number;
+  pinNumber?: number;
   balance?: number;
 }

@@ -11,11 +11,10 @@
           <h3>Account Information</h3>
           <p>
             Account Holder Name:
-            <span id="accountHolderName">{{
-              accounts[0]?.accountHolderName
-            }}</span>
+            <span id="accountHolderName">{{ accounts.accountHolderName }}</span>
           </p>
           <p>PIN Number: <span id="pinNumber">****</span></p>
+          <p>Current Balance: {{ accounts.balance }}</p>
           <form>
             <div class="form-group">
               <input
@@ -28,6 +27,7 @@
                 required
               />
             </div>
+            <div style="color: red">{{ errorMessage }}</div>
 
             <div
               class="d-grid gap-2 d-md-flex justify-content-md-center"

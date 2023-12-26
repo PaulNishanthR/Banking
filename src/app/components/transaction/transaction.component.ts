@@ -20,28 +20,14 @@ export class TransactionComponent implements OnInit {
     private transactionService: TransactionService
   ) {}
 
-  accounts: Account[] = [];
+  accounts: Account = {
+    id: 0,
+    accountHolderName: '',
+    balance: 0,
+  };
   amount: number = 0;
   transactions: Transaction[] = [];
-
-  // ngOnInit(): void {
-  //   this.homeService
-  //     .getAccount(this.storageService.getLoggedInAccount().data.id)
-  //     .subscribe({
-  //       next: (response: Appresponse) => {
-  //         if (response && response.data) {
-  //           this.accounts = response.data;
-  //           console.log('account details:', this.accounts);
-  //         } else {
-  //           console.log('Invalid API response format:', response);
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.log('An error occurred', err);
-  //       },
-  //       complete: () => console.log('There are no more actions happening.'),
-  //     });
-  // }
+  errorMessage: string = ''; // Declare errorMessage variable
 
   ngOnInit(): void {
     const loggedInAccountId = this.storageService.getLoggedInAccount().data.id;
@@ -54,7 +40,9 @@ export class TransactionComponent implements OnInit {
       next: (response: Appresponse) => {
         if (response && response.data) {
           this.accounts = response.data;
-          console.log('account details:', this.accounts);
+          console.log('Account details:', this.accounts);
+          // Set balance in local storage
+          this.storageService.setAccountBalance(this.accounts.balance || 0);
         } else {
           console.log('Invalid API response format:', response);
         }
@@ -104,21 +92,28 @@ export class TransactionComponent implements OnInit {
       this.amount
     ) {
       const id = loggedInAccount.data.id;
-      this.homeService.postDebit(id, this.amount).subscribe({
-        next: (response: any) => {
-          if (response && response.data) {
-            console.log('Debit successful:', response);
-            this.loadAccountDetails(id);
-            this.loadTransactionHistory(id);
-          } else {
-            console.log('Debit response or data is missing:', response);
-          }
-        },
-        error: (err) => {
-          console.log('Error while posting debit:', err);
-        },
-        complete: () => console.log('Debit request completed.'),
-      });
+
+      const storedBalance = this.storageService.getAccountBalance();
+
+      if (storedBalance !== undefined && this.amount <= storedBalance) {
+        this.homeService.postDebit(id, this.amount).subscribe({
+          next: (debitResponse: any) => {
+            if (debitResponse && debitResponse.data) {
+              console.log('Debit successful:', debitResponse);
+              this.loadAccountDetails(id);
+              this.loadTransactionHistory(id);
+            } else {
+              console.log('Debit response or data is missing:', debitResponse);
+            }
+          },
+          error: (debitError) => {
+            console.log('Error while posting debit:', debitError);
+          },
+          complete: () => console.log('Debit request completed.'),
+        });
+      } else {
+        this.errorMessage = 'Insufficient Balance';
+      }
     } else {
       console.log('Account ID or amount is missing.');
     }
