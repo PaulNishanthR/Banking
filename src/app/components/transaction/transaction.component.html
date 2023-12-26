@@ -1,0 +1,79 @@
+<div class="row justify-content-end mt-3 me-3">
+  <div class="col-md-6 text-end">
+    <button type="button" class="btn btn-danger">Logout</button>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <h3>Account Information</h3>
+          <p>
+            Account Holder Name:
+            <span id="accountHolderName">{{
+              accounts[0]?.accountHolderName
+            }}</span>
+          </p>
+          <p>PIN Number: <span id="pinNumber">****</span></p>
+          <form>
+            <div class="form-group">
+              <input
+                type="number"
+                class="form-control"
+                id="amount"
+                name="amount"
+                placeholder="Enter the amount"
+                [(ngModel)]="amount"
+                required
+              />
+            </div>
+
+            <div
+              class="d-grid gap-2 d-md-flex justify-content-md-center"
+              style="margin-top: 10px"
+            >
+              <button
+                type="button"
+                class="btn btn-primary me-md-2 mb-2"
+                (click)="onSubmitCredit()"
+              >
+                Credit
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary mb-2"
+                (click)="onSubmitDebit()"
+              >
+                Debit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <table class="table table-striped text-center">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Credit</th>
+            <th scope="col">Debit</th>
+            <th scope="col">Updated At</th>
+            <th scope="col">Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>{{ transaction.creditAmount }}</td>
+            <td>{{ transaction.debitAmount }}</td>
+            <td>{{ transaction.updatedAt | date : "short" }}</td>
+            <td>{{ transaction.balance }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
